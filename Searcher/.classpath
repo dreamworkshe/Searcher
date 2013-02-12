@@ -9,5 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lucene-4.0.0/analysis/common/lucene-analyzers-common-4.0.0.jar"/>
 	<classpathentry kind="lib" path="lucene-4.0.0/queryparser/lucene-queryparser-4.0.0.jar"/>
+	<classpathentry kind="lib" path="jsoup-1.7.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
