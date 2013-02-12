@@ -66,7 +66,7 @@ public class IndexFiles {
     String docsPath = "/Users/yaocheng/Desktop/Index_source/0131_set/Textdata";
     // Set url table file name
     String tablePath = "/Users/yaocheng/Desktop/Index_source/0131_set/table_url_list.txt";
-   
+    // air in
     // Start building index
     Date start = new Date();
     try {
