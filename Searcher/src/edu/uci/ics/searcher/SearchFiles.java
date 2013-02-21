@@ -236,4 +236,21 @@ public class SearchFiles {
       }
     }
   }
+
+  public static void listUrl(String query_string, int num_of_results) throws Exception {
+    String index = "index";
+    String field = "contents";    
+    IndexReader idxreader = DirectoryReader.open(FSDirectory.open(new File(index)));
+    IndexSearcher searcher = new IndexSearcher(idxreader);
+    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
+    QueryParser parser = new QueryParser(Version.LUCENE_40, field, analyzer);
+    Query query = parser.parse(query_string);
+    TopDocs results = searcher.search(query, num_of_results);
+    ScoreDoc[] hits = results.scoreDocs;
+    for (int i = 0; i < num_of_results; i++) {
+      Document doc = searcher.doc(hits[i].doc);
+      String url = doc.get("url");
+      System.out.println(url);
+    }
+  }
 }

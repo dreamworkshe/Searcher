@@ -1,0 +1,5 @@
+http://www.ics.uci.edu/~mlearn/
+http://archive.ics.uci.edu/ml/datasets.html
+http://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits
+http://archive.ics.uci.edu/ml/datasets/Lenses
+http://archive.ics.uci.edu/ml/datasets/Multiple+Features

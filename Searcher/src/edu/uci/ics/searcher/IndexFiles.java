@@ -184,8 +184,8 @@ public class IndexFiles {
         
         counter++;
         System.out.println("File # " +counter+ " OK!");
-        if (counter == maxLines)
-          break;
+        //if (counter == maxLines)
+        //  break;
       }
       tableIn.close();
     } catch (Exception e) {
