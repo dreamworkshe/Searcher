@@ -63,10 +63,9 @@ public class IndexFiles {
     // Set index store path
     String indexPath = "index";
     // Set document file path
-    String docsPath = "/Users/yaocheng/Desktop/Index_source/0131_set/Textdata";
+    String docsPath = "/Users/yaocheng/Desktop/Index_source_new/Textdata";
     // Set url table file name
-    String tablePath = "/Users/yaocheng/Desktop/Index_source/0131_set/table_url_list.txt";
-    // air in
+    String tablePath = "/Users/yaocheng/Desktop/Index_source_new/table_url_list.txt";
     // Start building index
     Date start = new Date();
     try {
@@ -144,6 +143,13 @@ public class IndexFiles {
     }
   }
 
+  
+  static private boolean filterUrl(String url) {
+    if (url.matches("http://www\\.ics\\.uci\\.edu/~develop/.*")) {
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Indexes the given file using the given writer, or if a directory is given,
@@ -178,6 +184,11 @@ public class IndexFiles {
         String[] tokens = tline.split("\\s+");
         String page_url = tokens[0];
         String page_textfile = tokens[1];
+        
+        // Filter useless urls
+        if (filterUrl(page_url)) {
+          continue;
+        }
         
         // Add this url and its contents to index
         addDoc(writer, page_url, docsPath+"/"+page_textfile);
