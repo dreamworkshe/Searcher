@@ -1,5 +1,5 @@
 http://www.ics.uci.edu/~lopes/teaching/cs221W12/index.html
-http://www.ics.uci.edu/~welling/publications/papers/GenHarm3.pdf
-http://www.ics.uci.edu/~lopes/teaching/cs221W12/slides/CS%20221%20Information%20Retrieval%20Projects.pdf
-http://www.ics.uci.edu/~chenli/pub/2007-SSDBM.pdf
+http://www.ics.uci.edu/~lopes/teaching/cs221W13/index.html
 http://www.ics.uci.edu/~lopes/teaching/inf141W12/index.html
+http://www.ics.uci.edu/~djp3/classes/2010_01_CS221/index.html
+http://www.ics.uci.edu/~djp3/classes/2009_01_02_INF141/index.html

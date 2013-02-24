@@ -2,6 +2,7 @@ package edu.uci.ics.searcher;
 
 import org.jsoup.*;
 import org.jsoup.nodes.*;
+import java.io.File;
 
 public class HtmlParser {
 
@@ -25,5 +26,16 @@ public class HtmlParser {
 
   public String getText() {
     return this.Text;
+  }
+  
+  public static String getTitle(String filepath) {
+    String title = null;
+    System.out.println(filepath);
+    try {
+      Document doc = Jsoup.parse(new File(filepath), "UTF-8");
+      title = doc.title();
+    } catch(Exception e) {
+    }
+    return title;
   }
 }

@@ -63,7 +63,7 @@ public class IndexFiles {
     // Set index store path
     String indexPath = "index";
     // Set document file path
-    String docsPath = "/Users/yaocheng/Desktop/Index_source_new/Textdata";
+    String docsPath = "/Users/yaocheng/Desktop/Index_source_new/";
     // Set url table file name
     String tablePath = "/Users/yaocheng/Desktop/Index_source_new/table_url_list.txt";
     // Start building index
@@ -121,12 +121,19 @@ public class IndexFiles {
    * @param url The url string
    * @param url_text_path Content file of the url
    */
-  static private void addDoc(IndexWriter writer, String url, String url_text_path) {
+  static private void addDoc(IndexWriter writer, String url, String docsPath, String fileName) {
     Document doc = new Document();
     try {
-      FileInputStream fis = new FileInputStream(url_text_path);
+      // add url
       doc.add(new StringField("url", url, Field.Store.YES));
+      // add contents
+      FileInputStream fis = new FileInputStream(docsPath+"Textdata/"+fileName);
       doc.add(new TextField("contents", new BufferedReader(new InputStreamReader(fis, "UTF-8"))));
+      // add title
+      String title = HtmlParser.getTitle(docsPath+"Htmldata/"+fileName);
+      //System.out.println(title);
+      doc.add(new TextField("title", title, Field.Store.YES));
+      
       if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
         // New index, so we just add the document (no old document can be there):
         System.out.println("adding " + url);
@@ -174,7 +181,7 @@ public class IndexFiles {
       // Read url table file
       BufferedReader tableIn = new BufferedReader(new InputStreamReader(new FileInputStream(tablePath), "UTF-8"));
       String line;
-      int maxLines = 50; // Note: for now, index only maxLines files
+      //int maxLines = 50; // Note: for now, index only maxLines files
       int counter = 0;
       while ( (line=tableIn.readLine()) != null) {
         String tline = line.trim();
@@ -186,12 +193,12 @@ public class IndexFiles {
         String page_textfile = tokens[1];
         
         // Filter useless urls
-        if (filterUrl(page_url)) {
-          continue;
-        }
+//        if (filterUrl(page_url)) {
+//          continue;
+//        }
         
         // Add this url and its contents to index
-        addDoc(writer, page_url, docsPath+"/"+page_textfile);
+        addDoc(writer, page_url, docsPath, page_textfile);
         
         counter++;
         System.out.println("File # " +counter+ " OK!");

@@ -1,0 +1,5 @@
+http://www.ics.uci.edu/~mlearn/
+http://archive.ics.uci.edu/ml/machine-learning-databases/
+http://cml.ics.uci.edu/
+http://mlearn.ics.uci.edu/MLRepository.html
+http://archive.ics.uci.edu/ml/datasets/Mushroom
