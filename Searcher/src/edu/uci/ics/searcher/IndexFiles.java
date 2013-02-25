@@ -134,6 +134,9 @@ public class IndexFiles {
       //System.out.println(title);
       doc.add(new TextField("title", title, Field.Store.YES));
       
+      // Document-level boost
+      //doc.setBoost(1.0f);
+      
       if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
         // New index, so we just add the document (no old document can be there):
         System.out.println("adding " + url);
@@ -152,10 +155,24 @@ public class IndexFiles {
 
   
   static private boolean filterUrl(String url) {
-    if (url.matches("http://www\\.ics\\.uci\\.edu/~develop/.*")) {
+    //if (url.matches("http://www\\.ics\\.uci\\.edu/~develop/.*")) {
+    //  return true;
+    //}
+    if (url.endsWith("/feed/")) {
+      return true;
+    }
+    if (url.indexOf("feed=rss") >= 0) {
+      return true;
+    }
+    if (url.indexOf(":8080") >= 0) {
       return true;
     }
     return false;
+  }
+  
+  static private boolean tooSmall(String filepath) {
+    File f = new File(filepath);
+    return f.length() < 750;
   }
 
   /**
@@ -193,9 +210,19 @@ public class IndexFiles {
         String page_textfile = tokens[1];
         
         // Filter useless urls
-//        if (filterUrl(page_url)) {
+        if (filterUrl(page_url)) {
+          continue;
+        }
+        
+        // Filter nofollow
+//        if (!HtmlParser.toFollow(docsPath+"Htmldata/"+page_textfile)) {
 //          continue;
 //        }
+        
+        // Filter small file
+        if (tooSmall(docsPath+"Textdata/"+page_textfile)) {
+          continue;
+        }
         
         // Add this url and its contents to index
         addDoc(writer, page_url, docsPath, page_textfile);

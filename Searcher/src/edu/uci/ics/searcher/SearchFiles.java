@@ -29,9 +29,16 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.PhraseQuery;
+import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
@@ -237,14 +244,54 @@ public class SearchFiles {
     }
   }
 
-  public static String[] getTopSearchResults(String query_string, int num_of_results) throws Exception {
-    String index = "index";
-    String field = "contents";    
-    IndexReader idxreader = DirectoryReader.open(FSDirectory.open(new File(index)));
-    IndexSearcher searcher = new IndexSearcher(idxreader);
+  
+  private static Query myQuery(String query_string) throws Exception {
+    String field = "contents";
     Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
     QueryParser parser = new QueryParser(Version.LUCENE_40, field, analyzer);
     Query query = parser.parse(query_string);
+    return query;
+  }
+  
+  private static Query myBooleanQuery(String query_string) throws Exception {
+    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
+    BooleanQuery bq = new BooleanQuery();
+    
+    String[] query_tokens = query_string.trim().split(" ");
+    PhraseQuery contents_phrase_query = new PhraseQuery();
+    PhraseQuery title_phrase_query = new PhraseQuery();
+    for (int i = 0; i < query_tokens.length; i++) {
+      contents_phrase_query.add(new Term("contents", query_tokens[i]), i);
+      title_phrase_query.add(new Term("title", query_tokens[i]), i);
+    }
+    contents_phrase_query.setBoost(2.0f);
+    title_phrase_query.setBoost(2.0f);
+    bq.add(contents_phrase_query, BooleanClause.Occur.SHOULD);
+    bq.add(title_phrase_query, BooleanClause.Occur.SHOULD);
+    
+    TermQuery contents_term_query = new TermQuery(new Term("contents", query_string));
+    bq.add(contents_term_query, BooleanClause.Occur.SHOULD);
+    TermQuery title_term_query = new TermQuery(new Term("title", query_string));
+    bq.add(title_term_query, BooleanClause.Occur.SHOULD);
+    
+    //FuzzyQuery url_query = new FuzzyQuery(new Term("url", query_string), 1);
+    //bq.add(url_query, BooleanClause.Occur.SHOULD);
+    
+    Query query = new QueryParser(Version.LUCENE_40, "contents", analyzer).parse(bq.toString());
+    return query;
+  }
+  
+  public static String[] getTopSearchResults(String query_string, int num_of_results) throws Exception {
+    // Read index
+    String index = "index";
+    IndexReader idxreader = DirectoryReader.open(FSDirectory.open(new File(index)));
+    
+    // Init searcher of the index
+    IndexSearcher searcher = new IndexSearcher(idxreader);
+    
+    // Set up query
+    Query query = myBooleanQuery(query_string);
+    
     TopDocs results = searcher.search(query, num_of_results);
     ScoreDoc[] hits = results.scoreDocs;
     

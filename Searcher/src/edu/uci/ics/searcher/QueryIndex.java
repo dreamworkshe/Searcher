@@ -41,6 +41,7 @@ public class QueryIndex {
       
       for (int i = 0; i < 5; i++) {
         String url = this.urlList[i];
+        // Get rel rank from oracle
         int score = oracle.getRelOfUrl(url);
         if (score >= 0) {
           this.relList.put(url, score);
@@ -53,7 +54,7 @@ public class QueryIndex {
     }
     
     // Compute the DCG at a given position
-    public double computeDCG(int pos) {
+    private double computeDCG(int pos) {
       double score = (double)this.relList.get(this.urlList[pos]);
       //System.out.println("Score: "+Math.log(pos) / Math.log(2));
       if (pos == 0) {
@@ -123,12 +124,26 @@ public class QueryIndex {
     return 1.0;
   }
   
+  private static void testSearch(String test, int num) throws Exception {
+    String[] res = SearchFiles.getTopSearchResults(test, num);
+    for (int i = 0; i < num; i++) {
+      System.out.println(res[i]);
+    }
+  }
+  
+  private static void testSearch2() throws Exception {
+    String[] res = SearchFiles.getTopSearchResults("machine learning", 100);
+    for (int i = 0; i < res.length; i++) {
+      System.out.println(res[i]);
+    }
+  }
+  
   /**
    * @param args
    */
   public static void main(String[] args) throws Exception {
-    //SearchFiles.getTopSearchResults("student affairs", 100);
     initGoogleResults();
     getNDCG5();
+    //testSearch("graduate courses", 10);
   }
 }
