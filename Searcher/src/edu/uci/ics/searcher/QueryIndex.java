@@ -144,6 +144,6 @@ public class QueryIndex {
   public static void main(String[] args) throws Exception {
     initGoogleResults();
     getNDCG5();
-    //testSearch("graduate courses", 10);
+    testSearch("security", 10);
   }
 }

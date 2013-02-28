@@ -24,6 +24,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.LongField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -131,8 +132,10 @@ public class IndexFiles {
       doc.add(new TextField("contents", new BufferedReader(new InputStreamReader(fis, "UTF-8"))));
       // add title
       String title = HtmlParser.getTitle(docsPath+"Htmldata/"+fileName);
-      //System.out.println(title);
       doc.add(new TextField("title", title, Field.Store.YES));
+      // add length
+      File f = new File(docsPath+"Textdata/"+fileName);
+      doc.add(new LongField("length", f.length(), Field.Store.YES));
       
       // Document-level boost
       //doc.setBoost(1.0f);
@@ -220,9 +223,9 @@ public class IndexFiles {
 //        }
         
         // Filter small file
-        if (tooSmall(docsPath+"Textdata/"+page_textfile)) {
-          continue;
-        }
+//        if (tooSmall(docsPath+"Textdata/"+page_textfile)) {
+//          continue;
+//        }
         
         // Add this url and its contents to index
         addDoc(writer, page_url, docsPath, page_textfile);

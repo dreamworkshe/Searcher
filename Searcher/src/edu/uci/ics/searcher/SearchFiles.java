@@ -43,6 +43,12 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+import org.apache.lucene.queries.CustomScoreProvider;
+import org.apache.lucene.queries.CustomScoreQuery;
+import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.search.Explanation;
+//import org.apache.lucene.index.FieldInvertState;
+//import org.apache.lucene.search.similarities.Similarity;
 
 /** Simple command-line based search demo. */
 public class SearchFiles {
@@ -274,7 +280,7 @@ public class SearchFiles {
     TermQuery title_term_query = new TermQuery(new Term("title", query_string));
     bq.add(title_term_query, BooleanClause.Occur.SHOULD);
     
-    //FuzzyQuery url_query = new FuzzyQuery(new Term("url", query_string), 1);
+    //FuzzyQuery url_query = new FuzzyQuery(new Term("url", "www.ics.uci.edu"), 2);
     //bq.add(url_query, BooleanClause.Occur.SHOULD);
     
     Query query = new QueryParser(Version.LUCENE_40, "contents", analyzer).parse(bq.toString());
@@ -292,7 +298,11 @@ public class SearchFiles {
     // Set up query
     Query query = myBooleanQuery(query_string);
     
-    TopDocs results = searcher.search(query, num_of_results);
+    // Addition scoring query
+    CustomScoreQuery myCustomQuery = new MyOwnScoreQuery(query);
+    
+    //TopDocs results = searcher.search(query, num_of_results);
+    TopDocs results = searcher.search(myCustomQuery.createWeight(searcher).getQuery(), num_of_results);
     ScoreDoc[] hits = results.scoreDocs;
     
     String[] top_results = new String[num_of_results];
@@ -303,5 +313,44 @@ public class SearchFiles {
       top_results[i] = url;
     }
     return top_results;
+  }
+  
+  static class MyOwnScoreQuery extends CustomScoreQuery {
+    private Query query;
+
+    public MyOwnScoreQuery(Query query) {
+        super(query);
+        this.query = query;
+    }
+    public CustomScoreProvider getCustomScoreProvider(final AtomicReaderContext reader) {
+      return new CustomScoreProvider(reader) {
+          @Override
+          public float customScore(int doc, float subQueryScore, float valSrcScore) throws IOException {
+              
+              float score = subQueryScore;
+              Document docObject = reader.reader().document(doc);
+              IndexSearcher searcher = new IndexSearcher(reader.reader()); 
+              
+              long len = Long.parseLong(docObject.get("length"));
+              
+              if (len <= 1000) {
+                score /= 2;
+              }
+              
+              String url = docObject.get("url");
+              if (url.indexOf("www.ics.uci.edu") >= 0) {
+                score *= 1.2;
+                //System.out.println(subQueryScore);
+              }
+              
+              if (url.indexOf("http://luci.ics.uci.edu/blog/?tag=software-engineering") >= 0) {
+                Explanation exp = searcher.explain(query, doc);
+                //System.out.println(exp);
+              }
+              
+              return score;
+          }
+      };
+  }
   }
 }

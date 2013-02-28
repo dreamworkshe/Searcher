@@ -18,5 +18,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jsoup-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lucene-4.0.0/queries/lucene-queries-4.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
