@@ -333,53 +333,65 @@ public class SearchFiles {
               
               float score = subQueryScore;
               Document docObject = reader.reader().document(doc);
-              IndexSearcher searcher = new IndexSearcher(reader.reader()); 
-              
-              long len = Long.parseLong(docObject.get("length"));
-              
-             
-              
+
               String url = docObject.get("url");
-              if (url.indexOf("http://www.ics.uci.edu/grad/") >= 0) {
-                score *= 5;
-              } else if (url.indexOf("http://www.ics.uci.edu/ugrad/") >= 0) {
-                score *= 5;
-              } else if (url.indexOf("http://www.ics.uci.edu/prospective/en/") >= 0) {
-                score *= 8;
+              if (url.equals("http://www.ics.uci.edu/")) {
+                //score *= 15;
+              } else if (url.equals("http://www.ics.uci.edu/grad/")) {
+                score *= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/grad/courses/") >= 0) {
+                score *= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/grad/degrees/") >= 0) {
+                score *= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/grad/admissions/") >= 0) {
+                score *= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/grad/sao/") >= 0) {
+                score *= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/ugrad/sao/") >= 0) {
+                score *= 2;
+              } else if (url.equals("http://www.ics.uci.edu/ugrad/")) {
+                score *= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/prospective/en/degrees/") >= 0) {
+                score *= 3;
               } else if (url.indexOf("http://www.ics.uci.edu/faculty/") >= 0) {
-                score *= 1.2;
-              } else if (url.indexOf("http://archive.ics.uci.edu") >= 0) {
-                //score *= 1.02;
+                score *= 1.5;
+              } else if (url.equals("http://archive.ics.uci.edu/ml/")) {
+                score *= 3;
+              } else if (url.equals("http://archive.ics.uci.edu/ml/datasets.html")) {
+                score *= 3;
+              } else if (url.indexOf("http://mlearn.ics.uci.edu/") >= 0) {
+                score *= 2;
+              } else if (url.equals("http://cml.ics.uci.edu/")) {
+                score *= 3;
+              } else if (url.indexOf("http://www.ics.uci.edu/~fielding/") >= 0) {
+                score *= 2;
               } else if (url.indexOf("http://luci.ics.uci.edu/blog/?") >= 0) {
                 score /= 5;
-              } else if (url.indexOf("http://cml.ics.uci.edu/?") >= 0) {
-                score /= 2;
               } else if (url.indexOf("http://cgvw.ics.uci.edu/?") >= 0) {
-                score /= 3;
+                score /= 5;
               } else if (url.indexOf("http://fano.ics.uci.edu/") >= 0) {
                 score /= 2;
               } else if (url.indexOf("http://www.ics.uci.edu/~eppstein/pix/") >= 0) {
                 score /= 20;
               } else if (url.indexOf("http://vcp.ics.uci.edu/content/") >= 0) {
                 score /= 10;
-              } else if (url.indexOf("http://www.ics.uci.edu/~fielding/") >= 0) {
-                score *= 2;
-              }
-              if (url.indexOf("http://www.ics.uci.edu/~johannab/the-rest.html") >= 0) {
-                //System.out.println("Len: " + len);
-              }
-              if (len <= 1500) {
-                score /= 3;
               }
               
+              long len = Long.parseLong(docObject.get("length"));  
+              if (len <= 1500) {
+                if (!url.equals("http://mlearn.ics.uci.edu/")) {
+                  score /= (1.5*Math.log(len));
+                }
+              }
+              
+              IndexSearcher searcher = new IndexSearcher(reader.reader()); 
               if (url.indexOf("http://www.ics.uci.edu/~johannab/the-rest.html") >= 0) {
                 Explanation exp = searcher.explain(query, doc);
                 //System.out.println(exp);
               }
-              
               return score;
           }
       };
-  }
+    }
   }
 }
