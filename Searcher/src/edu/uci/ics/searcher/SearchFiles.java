@@ -276,9 +276,13 @@ public class SearchFiles {
     bq.add(title_phrase_query, BooleanClause.Occur.SHOULD);
     
     TermQuery contents_term_query = new TermQuery(new Term("contents", query_string));
+    //contents_term_query.setBoost(1.5f);
     bq.add(contents_term_query, BooleanClause.Occur.SHOULD);
     TermQuery title_term_query = new TermQuery(new Term("title", query_string));
     bq.add(title_term_query, BooleanClause.Occur.SHOULD);
+    
+    //TermQuery pub_query = new TermQuery(new Term("contents", "publications"));
+    //bq.add(pub_query, BooleanClause.Occur.SHOULD);
     
     //FuzzyQuery url_query = new FuzzyQuery(new Term("url", "www.ics.uci.edu"), 2);
     //bq.add(url_query, BooleanClause.Occur.SHOULD);
@@ -333,17 +337,42 @@ public class SearchFiles {
               
               long len = Long.parseLong(docObject.get("length"));
               
-              if (len <= 1000) {
-                score /= 2;
-              }
+             
               
               String url = docObject.get("url");
-              if (url.indexOf("www.ics.uci.edu") >= 0) {
+              if (url.indexOf("http://www.ics.uci.edu/grad/") >= 0) {
+                score *= 5;
+              } else if (url.indexOf("http://www.ics.uci.edu/ugrad/") >= 0) {
+                score *= 5;
+              } else if (url.indexOf("http://www.ics.uci.edu/prospective/en/") >= 0) {
+                score *= 8;
+              } else if (url.indexOf("http://www.ics.uci.edu/faculty/") >= 0) {
                 score *= 1.2;
-                //System.out.println(subQueryScore);
+              } else if (url.indexOf("http://archive.ics.uci.edu") >= 0) {
+                //score *= 1.02;
+              } else if (url.indexOf("http://luci.ics.uci.edu/blog/?") >= 0) {
+                score /= 5;
+              } else if (url.indexOf("http://cml.ics.uci.edu/?") >= 0) {
+                score /= 2;
+              } else if (url.indexOf("http://cgvw.ics.uci.edu/?") >= 0) {
+                score /= 3;
+              } else if (url.indexOf("http://fano.ics.uci.edu/") >= 0) {
+                score /= 2;
+              } else if (url.indexOf("http://www.ics.uci.edu/~eppstein/pix/") >= 0) {
+                score /= 20;
+              } else if (url.indexOf("http://vcp.ics.uci.edu/content/") >= 0) {
+                score /= 10;
+              } else if (url.indexOf("http://www.ics.uci.edu/~fielding/") >= 0) {
+                score *= 2;
+              }
+              if (url.indexOf("http://www.ics.uci.edu/~johannab/the-rest.html") >= 0) {
+                //System.out.println("Len: " + len);
+              }
+              if (len <= 1500) {
+                score /= 3;
               }
               
-              if (url.indexOf("http://luci.ics.uci.edu/blog/?tag=software-engineering") >= 0) {
+              if (url.indexOf("http://www.ics.uci.edu/~johannab/the-rest.html") >= 0) {
                 Explanation exp = searcher.explain(query, doc);
                 //System.out.println(exp);
               }

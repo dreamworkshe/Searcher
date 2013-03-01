@@ -86,6 +86,15 @@ public class QueryIndex {
         System.out.println("Url: "+this.urlList[i]+"\nRel: "+this.getRelOfUrl(this.urlList[i]));
       }
     }
+    
+    public void writeResultsToFile(String filename) throws Exception {
+      BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
+      for (String url: this.urlList) {
+        bw.write(url);
+        bw.write("\n");
+      }
+      bw.close();
+    }
 
   }
   
@@ -114,6 +123,7 @@ public class QueryIndex {
       System.out.print("NDCG@5 of "+query+": ");
       QueryResults oracle = OracleResults.get(query);
       QueryResults ours = new QueryResults(query, oracle);
+      ours.writeResultsToFile("/Users/yaocheng/git/edu.uci.ics.searcher/Searcher/our_query_results/"+query+".txt");
       for (int i = 0; i < 5; i++) {
         //System.out.print(ours.getDCGAtPos(i) + "/" + oracle.getDCGAtPos(i) + "=");
         System.out.print(ours.getDCGAtPos(i) / oracle.getDCGAtPos(i));
@@ -144,6 +154,6 @@ public class QueryIndex {
   public static void main(String[] args) throws Exception {
     initGoogleResults();
     getNDCG5();
-    testSearch("security", 10);
+    //testSearch("security", 30);
   }
 }

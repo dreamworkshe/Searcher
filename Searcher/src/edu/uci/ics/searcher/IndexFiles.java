@@ -158,9 +158,9 @@ public class IndexFiles {
 
   
   static private boolean filterUrl(String url) {
-    //if (url.matches("http://www\\.ics\\.uci\\.edu/~develop/.*")) {
-    //  return true;
-    //}
+    if (url.matches("http://www\\.ics\\.uci\\.edu/~develop/.*")) {
+      return true;
+    }
     if (url.endsWith("/feed/")) {
       return true;
     }
@@ -168,6 +168,12 @@ public class IndexFiles {
       return true;
     }
     if (url.indexOf(":8080") >= 0) {
+      return true;
+    }
+    if (url.indexOf("http://galen.ics.uci.edu/") >= 0) {
+      return true;
+    }
+    if (url.indexOf("/javadoc/") >= 0) {
       return true;
     }
     return false;
