@@ -365,22 +365,26 @@ public class SearchFiles {
                 score *= 3;
               } else if (url.indexOf("http://www.ics.uci.edu/~fielding/") >= 0) {
                 score *= 2;
-              } else if (url.indexOf("http://luci.ics.uci.edu/blog/?") >= 0) {
+              } 
+              
+              else if (url.indexOf("http://luci.ics.uci.edu/blog/?") >= 0) {
                 score /= 5;
               } else if (url.indexOf("http://cgvw.ics.uci.edu/?") >= 0) {
                 score /= 5;
               } else if (url.indexOf("http://fano.ics.uci.edu/") >= 0) {
                 score /= 2;
               } else if (url.indexOf("http://www.ics.uci.edu/~eppstein/pix/") >= 0) {
-                score /= 20;
+                score /= 20; // REST
               } else if (url.indexOf("http://vcp.ics.uci.edu/content/") >= 0) {
-                score /= 10;
+                score /= 10; // REST
               }
+              
               
               long len = Long.parseLong(docObject.get("length"));  
               if (len <= 1500) {
                 if (!url.equals("http://mlearn.ics.uci.edu/")) {
-                  score /= (1.5*Math.log(len));
+                  score /= (20/Math.log10(len));
+                  //score /= 3;
                 }
               }
               
